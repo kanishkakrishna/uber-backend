@@ -106,7 +106,7 @@ public class RideService {
         }
     }
 
-    // 🛑 WAPAS AAYA: Redis Blacklist Logic
+    // Record rejected drivers in Redis before cascading the request.
     public String rejectRide(Long rideId, Long driverId) {
         String rejectedKey = "ride_rejected_" + rideId;
         stringRedisTemplate.opsForSet().add(rejectedKey, String.valueOf(driverId));
@@ -126,7 +126,7 @@ public class RideService {
         }
     }
 
-    // 🎯 WAPAS AAYA: Find next best driver checking Blacklist
+    // Find the nearest driver who has not rejected this ride.
     private Long findNextBestDriver(Long rideId, double lat, double lng) {
         List<String> nearestDrivers = locationService.getNearestDrivers(lat, lng, 5.0);
         String rejectedKey = "ride_rejected_" + rideId;

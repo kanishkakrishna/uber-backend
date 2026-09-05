@@ -35,35 +35,35 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // NAYA: REGISTRATION API
+    // Register a new user.
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 
-        // Pehle check karo ki email already toh exist nahi karti
+        // Reject duplicate email registrations.
         if (userRepository.findByEmail(signupRequest.getEmail()) != null) {
             return ResponseEntity.badRequest().body("Error: Email pehle se registered hai bhai!");
         }
 
-        // Naya user banakar entity me details daalo
+        // Map the signup payload to a new user entity.
         User newUser = new User();
         newUser.setName(signupRequest.getName());
         newUser.setEmail(signupRequest.getEmail());
         newUser.setPhone(signupRequest.getPhone());
 
-        // Password encrypt karke save karo!
+        // Encode the password before persistence.
         newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
-        userRepository.save(newUser); // Postgres me save kar diya
+        userRepository.save(newUser); // Persist the user in PostgreSQL.
 
         return ResponseEntity.ok("Mubarak ho! User successfully register ho gaya!");
     }
 
-    // PURANA: LOGIN API (Username ko ab Email mankar chalenge)
+    // Authenticate with email as the username.
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) throws Exception {
 
         try {
-            // Yahan AuthRequest ka username asal me user ki EMAIL hai
+            // AuthRequest.username carries the user's email.
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );

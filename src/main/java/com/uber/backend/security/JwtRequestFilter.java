@@ -1,4 +1,4 @@
-package com.uber.backend.security; // Apne project ka package name check kar lena
+package com.uber.backend.security; // JWT request authentication filter.
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,27 +28,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        // 1. Request ke header se "Authorization" nikalna
+        // Read the Authorization header.
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwt = null;
 
-        // 2. Check karna ki token hai aur "Bearer " se shuru hota hai
+        // Extract a JWT from a Bearer token.
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // "Bearer " ke baad ka asli token nikalna
+            jwt = authorizationHeader.substring(7); // Strip the "Bearer " prefix.
             username = jwtUtil.extractUsername(jwt);
         }
 
-        // 3. Agar token me username hai aur user abhi tak login nahi hua hai context me
+        // Authenticate only when the token identifies a user and the context is empty.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // 4. Token ko validate karna apni JwtUtil class se
+            // Validate the token against the loaded user details.
             if (jwtUtil.validateToken(jwt, userDetails)) {
 
-                // 5. Sab sahi hai toh Spring Security ko bata do ki isko entry de de
+                // Populate the Spring Security context for the authenticated user.
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
@@ -57,7 +57,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        // 6. Request ko aage bhej do
+        // Continue the filter chain.
         chain.doFilter(request, response);
     }
 }

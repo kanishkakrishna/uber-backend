@@ -30,7 +30,7 @@ public class RideRequestConsumer {
                     dto.getPickupLatitude(), dto.getPickupLongitude(), 5.0
             );
 
-            // Sirf Top 1 ko bhejo (Cascade)
+            // Notify only the highest-priority driver in the cascade.
             if (matchingDrivers != null && !matchingDrivers.isEmpty()) {
                 String bestDriverStr = matchingDrivers.get(0);
                 Long bestDriverId = Long.parseLong(bestDriverStr);

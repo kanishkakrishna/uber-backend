@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // BCrypt ON kar diya taaki DB me password safe rahe!
+    // Encode stored passwords with BCrypt.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

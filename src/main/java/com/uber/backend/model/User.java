@@ -25,11 +25,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    // YEH NAYA ADD KIYA HAI: Password ke bina login kaise hoga!
+    // Encoded password used for authentication.
     @Column(nullable = false)
     private String password;
 
-    // YEH NAYA ADD KIYA HAI: Default role
+    // Users default to the RIDER role.
     private String role = "RIDER";
 
     private LocalDateTime createdAt = LocalDateTime.now();

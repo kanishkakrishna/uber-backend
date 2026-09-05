@@ -1,4 +1,4 @@
-package com.uber.backend.security; // Apne project ka sahi package name yahan check kar lena
+package com.uber.backend.security; // JWT utility helpers.
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,22 +16,22 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Ye hamara secret password hai jisse token lock hoga (kam se kam 256-bit lamba hona chahiye)
+    // HMAC signing secret; HS256 requires at least 256 bits.
     private static final String SECRET = "uber-clone-backend-very-long-secret-key-for-jwt-authentication";
 
-    // Token ki validity (Yahan maine 10 ghante rakhi hai: 1000ms * 60s * 60m * 10h)
+    // Token validity: 10 hours.
     private static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * 10;
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    // 1. Token me se Username nikalna
+    // Extract the token subject.
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 2. Token ki Expiry Date nikalna
+    // Extract the token expiration time.
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -53,7 +53,7 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // 3. Naya Token Generate karna (Login ke baad)
+    // Generate a JWT after successful authentication.
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
@@ -69,7 +69,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 4. Token Valid hai ya nahi ye check karna
+    // Validate subject ownership and expiration.
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

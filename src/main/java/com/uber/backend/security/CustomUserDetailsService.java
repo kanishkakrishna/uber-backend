@@ -17,18 +17,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Tere repo me findByEmail banaya hua hai, usi ko use karenge
+        // Load the application user by email.
         com.uber.backend.model.User user = userRepository.findByEmail(email);
 
         if (user == null) {
             throw new UsernameNotFoundException("Bhai, ye email DB me nahi mili: " + email);
         }
 
-        // Agar mil gaya, toh Spring Security ko uski details pakda do
+        // Adapt the application user to Spring Security's UserDetails.
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                new ArrayList<>() // Authorities/Roles abhi khali rakhte hain
+                new ArrayList<>() // No roles or authorities are assigned yet.
         );
     }
 }

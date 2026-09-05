@@ -10,29 +10,29 @@ import java.time.LocalDateTime;
 public class Driver {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ye bhi auto increment krega id, id iss table ka primary key hai
-    private Long id;// id primary key hai kyunki ye kbhi change nhi hoga
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Database-generated primary key.
+    private Long id;// Stable driver identifier.
 
-    @Column(nullable = false) // naam null nhi ho skta
+    @Column(nullable = false) // Driver name is required.
     private String name;
 
-    @Column(nullable = false, unique = true) // email bhle user change krwa skta hai apna
-    //isiliye ye bhi primary key nhi hai
+    @Column(nullable = false, unique = true) // Email is required and unique, but remains mutable user data.
+    // It is therefore not used as the primary key.
     private String email;
 
-    @Column(nullable = false, unique = true) // jaisa emial ka bole waisa hi yahan bhi
+    @Column(nullable = false, unique = true) // Phone number is required and unique.
     private String phone;
 
     @Column(nullable = false, unique = true)
-    private String vehicleNumber; // Gaadi ka number (e.g., DL 1A BC 1234)
+    private String vehicleNumber; // Unique vehicle registration number (e.g., DL 1A BC 1234).
 
     @Column(nullable = false)
-    private Double earnings = 0.0; // Shuru me driver ki kamai 0.0 rahegi
+    private Double earnings = 0.0; // Drivers start with zero earnings.
 
     @Enumerated(EnumType.STRING)
-    private DriverStatus status = DriverStatus.OFFLINE; // Default status offline rahega
+    private DriverStatus status = DriverStatus.OFFLINE; // Drivers start offline.
 
-    // Last known location (Asli real-time location toh hum Redis me handle karenge)
+    // Last known coordinates; real-time tracking is stored in Redis.
     private Double latitude;
     private Double longitude;
 

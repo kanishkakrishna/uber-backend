@@ -11,16 +11,16 @@ public class Ride {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // yahan bhi ye har rides ka id hai auto increment , and it is primary key
+    private Long id; // Database-generated ride identifier.
 
-    // Foreign Key 1: Ye ride kis rider (User) ne book ki hai?
-    @ManyToOne // bahut saara rides ko ek User book kr skta hai, MANY- RIDES , ONE-USER
+    // Rider who requested the ride.
+    @ManyToOne // Many rides can belong to one rider.
     @JoinColumn(name = "rider_id", nullable = false)
     private User rider;
 
-    // Foreign Key 2: Ye ride kis Driver ko assign hui hai?
-    @ManyToOne // yahan bhi bahut saara rides ek driver ke naam ho skta hai alaga alag time pe
-    @JoinColumn(name = "driver_id") // Ye nullable (khali) ho sakta hai shuru me
+    // Driver assigned to the ride.
+    @ManyToOne // Many rides can be assigned to one driver over time.
+    @JoinColumn(name = "driver_id") // Driver is unset until the ride is accepted.
     private Driver driver;
 
     @Column(nullable = false)
@@ -36,11 +36,11 @@ public class Ride {
     private Double pickupLng;
 
     @Enumerated(EnumType.STRING)
-    private RideStatus status = RideStatus.REQUESTED; // Default status
+    private RideStatus status = RideStatus.REQUESTED; // New rides start in REQUESTED state.
 
-    private Double fare; // Ride ka paisa  // column bnega
+    private Double fare; // Calculated ride fare.
     @Column(nullable = false)
     private String paymentStatus = "PENDING";
 
-    private LocalDateTime createdAt = LocalDateTime.now();  // yahan bhi column bnega
+    private LocalDateTime createdAt = LocalDateTime.now();  // Ride creation timestamp.
 }

@@ -1,4 +1,4 @@
-package com.uber.backend.config; // Apna sahi package name dekh lena
+package com.uber.backend.config; // Redisson client configuration.
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -12,7 +12,7 @@ public class RedissonConfig {
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
-        // Redis ka default address
+        // Connect to the local Redis instance.
         config.useSingleServer().setAddress("redis://127.0.0.1:6379");
         return Redisson.create(config);
     }

@@ -39,7 +39,7 @@ public class RideController {
         return ResponseEntity.ok("Location Verified and Streamed Successfully!");
     }
 
-    // 🛑 WAPAS AAYA: Ride Reject karne ke liye
+    // Reject a ride and continue the driver-cascade flow.
     @PostMapping("/{rideId}/reject")
     public ResponseEntity<String> rejectRide(@PathVariable Long rideId, @RequestParam Long driverId) {
         String result = rideService.rejectRide(rideId, driverId);

@@ -5,7 +5,7 @@ import com.uber.backend.service.LocationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; // Ye import zaroori hai
+import java.util.List; // Used for nearest-driver response payloads.
 
 @RestController
 @RequestMapping("/api/location")
@@ -17,24 +17,24 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    // Har 5 second me driver ka app is API par request marega
+    // Receive periodic driver location updates.
     @PostMapping("/update")
     public ResponseEntity<String> updateLocation(@RequestBody LocationUpdateDTO dto) {
-        // Service ko data de diya taaki wo Redis me save kar de
+        // Persist the latest driver location in Redis.
         locationService.updateDriverLocation(dto.getDriverId(), dto.getLatitude(), dto.getLongitude());
 
-        // Success message wapas bhej diya
+        // Confirm the update to the client.
         return ResponseEntity.ok("Location updated super-fast in Redis!");
     }
 
-    // Rider is API ko hit karega apne aas-paas ke drivers dekhne ke liye
+    // Find drivers within the requested radius of the rider.
     @GetMapping("/nearest")
     public ResponseEntity<List<String>> getNearestDrivers(
             @RequestParam double latitude,
             @RequestParam double longitude,
-            @RequestParam(defaultValue = "5") double distance // Default 5 KM search karega
+            @RequestParam(defaultValue = "5") double distance // Default search radius is 5 km.
     ) {
         List<String> drivers = locationService.getNearestDrivers(latitude, longitude, distance);
         return ResponseEntity.ok(drivers);
     }
-} // <-- Dekh bhai, main class ka darwaza sabse last me band hua hai!
+} // End of LocationController.

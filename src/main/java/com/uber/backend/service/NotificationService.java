@@ -9,11 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class NotificationService {
 
-    // Ye map yaad rakhega ki kaunsa driver/rider kis connection (SseEmitter) par juda hai
+    // Track active SSE connections by driver and rider ID.
     private final ConcurrentHashMap<Long, SseEmitter> driverEmitters = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, SseEmitter> riderEmitters = new ConcurrentHashMap<>();
 
-    // ================= DRIVER WALE METHODS =================
+    // ================= DRIVER METHODS =================
 
     public SseEmitter subscribeDriver(Long driverId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
@@ -41,7 +41,7 @@ public class NotificationService {
         }
     }
 
-    // ================= RIDER WALE METHODS =================
+    // ================= RIDER METHODS =================
 
     public SseEmitter subscribeRider(Long riderId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
@@ -72,10 +72,10 @@ public class NotificationService {
         SseEmitter emitter = riderEmitters.get(riderId);
         if (emitter != null) {
             try {
-                // Ek chhota sa JSON string format bana rahe hain
+                // Serialize the live coordinates as a compact JSON payload.
                 String locationJson = String.format("{\"lat\": %f, \"lng\": %f}", lat, lng);
 
-                // Event ka naam "LocationUpdate" rakh rahe hain taaki frontend ise pehchan sake
+                // Use a dedicated event name so the frontend can route location updates.
                 emitter.send(SseEmitter.event().name("LocationUpdate").data(locationJson));
                 System.out.println("📍 [SSE LIVE] Rider " + riderId + " ko driver ki live location bhej di: " + locationJson);
             } catch (IOException e) {

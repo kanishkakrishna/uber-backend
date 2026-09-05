@@ -5,20 +5,18 @@ import com.uber.backend.model.Driver;
 import com.uber.backend.repository.DriverRepository;
 import org.springframework.stereotype.Service;
 
-@Service // Ye Spring Boot ko batata hai ki ye class humara main "Brain" hai
+@Service // Register this class as a Spring service.
 public class DriverService {
 
-    // Service ko Database (Godown) se baat karni padegi
+    // Repository used to persist driver records.
     private final DriverRepository driverRepository;
 
-    // Isko Constructor Injection bolte hain
-    //bhai ye jo hai na notes me acche se diya hai doubt hai to pdh lo
-    // ye bs ek tarah ka syntax hai connect krne ka dono ko ratna hi hota hai
+    // Inject the driver repository.
     public DriverService(DriverRepository driverRepository) {
         this.driverRepository = driverRepository;
     }
 
-    // Main Logic: DTO se data nikal kar Entity me daalna aur DB me save karna
+    // Map the registration DTO to an entity and persist it.
     public Driver registerDriver(DriverRegistrationDTO dto) {
 
         Driver newDriver = new Driver();
@@ -27,9 +25,9 @@ public class DriverService {
         newDriver.setPhone(dto.getPhone());
         newDriver.setVehicleNumber(dto.getVehicleNumber());
 
-        // Status by default OFFLINE rahega (wo model me already set hai)
+        // Driver status defaults to OFFLINE in the model.
 
-        // Database me save kar do!
+        // Persist and return the driver.
         return driverRepository.save(newDriver);
     }
 }
